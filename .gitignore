@@ -1,0 +1,23 @@
+### NextJS ###
+# Next build dir
+.next/
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+
+.history/
+.vscode/
+dist/
+*.pem
+
+# local env files
+.env*.local
+.env 
+
