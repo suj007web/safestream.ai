@@ -21,3 +21,4 @@ dist/
 .env*.local
 .env 
 
+venv/
