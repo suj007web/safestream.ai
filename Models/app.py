@@ -123,7 +123,7 @@ import requests
 import yt_dlp
 import cv2
 from videoClassify import VideoFrameClassification
-
+import threading
 app = Flask(__name__)
 
 # folder where the videos will be saved
@@ -134,65 +134,11 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 # Google's OAuth2 token validation URL
 GOOGLE_OAUTH2_VALIDATION_URL = "https://oauth2.googleapis.com/tokeninfo"
 
-# Function to validate access token
-def validate_access_token(access_token):
-    # Send a request to Google OAuth2 API to validate the token
-    response = requests.get(GOOGLE_OAUTH2_VALIDATION_URL, params={"id_token": access_token})
-    if response.status_code == 200:
-        # If the token is valid, the response will include user info
-        user_info = response.json()
-        return user_info  
-    else:
-        # Token is invalid or expired
-        return None
-
-#download YouTube video
-@app.route('/download', methods=['POST'])
-def download_video():
+def process_downloaded_video(file_path, webhook_url):
     try:
-        # Authorization header
-        # auth_header = request.headers.get('Authorization')
-        # if not auth_header:
-        #     return jsonify({'message': 'Authorization header is missing'}), 401
-        
-        # # Extract the access token
-        # access_token = auth_header.split("Bearer ")[-1]
-        
-        # # Validate the access token
-        # user_info = validate_access_token(access_token)
-        # if not user_info:
-        #     return jsonify({'message': 'Invalid or expired access token'}), 401
-
-        # If token is valid, proceed with video download
-        data = request.get_json()
-        video_url = data.get('url')
-        ydl_opts = {
-            'format': 'mp4',  # Ensure the format is mp4
-            'outtmpl': '%(title)s.%(ext)s',  # Output file name format
-        }
-
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                # Download the video and get the download path
-                info_dict = ydl.extract_info(video_url, download=True)
-                video_path = ydl.prepare_filename(info_dict)
-                return jsonify({'message': 'Video download successful', 'filePath': video_path}), 200
-            print(f"Download complete: {video_path}")
-        except Exception as e:
-            print(f"Error: {e}")
-            return jsonify({'message': 'Error downloading video'}), 500
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
-
-# Endpoint to analyze the video (mock analysis)
-@app.route('/analyse', methods=['POST'])
-def analyse_video():
-    try:
-        data = request.get_json()
-        file_path = data.get('filePath')
-
         if not file_path or not os.path.exists(file_path):
-            return jsonify({'message': 'Video file not found'}), 404
+            print("File not found")
+            return 
 
         video_capture = cv2.VideoCapture(file_path)
         fps = video_capture.get(cv2.CAP_PROP_FPS)
@@ -242,10 +188,114 @@ def analyse_video():
                             time_index.append((start_time, end_time))
 
         time_index = [(round(start), round(end)) for start, end in time_index]
-
+        if webhook_url:
+            payload = {
+                "status": "success",
+                "message": "Video analysis successful",
+                "result": time_index
+            }
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(webhook_url, json=payload, headers=headers)
+        print(f"Webhook Response: {response.status_code}, {response.text}")
         print(time_index)
+    except Exception as e:
+        print(f"Error in classification: {str(e)}")    
+        payload = {
+            "status": "failed",
+            "message": "Error analyzing video",
+            "error": str(e)
+        }    
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(webhook_url, json=payload, headers=headers)
+        print(f"Webhook Response: {response.status_code}, {response.text}")
 
-        return jsonify({'message': 'Video analysis successful', 'result': time_index}), 200
+
+# Function to validate access token
+def validate_access_token(access_token):
+    # Send a request to Google OAuth2 API to validate the token
+    response = requests.get(GOOGLE_OAUTH2_VALIDATION_URL, params={"id_token": access_token})
+    if response.status_code == 200:
+        # If the token is valid, the response will include user info
+        user_info = response.json()
+        return user_info  
+    else:
+        # Token is invalid or expired
+        return None
+
+#download YouTube video
+@app.route('/download', methods=['POST'])
+def download_video():
+    try:
+        # Authorization header
+        # auth_header = request.headers.get('Authorization')
+        # if not auth_header:
+        #     return jsonify({'message': 'Authorization header is missing'}), 401
+        
+        # # Extract the access token
+        # access_token = auth_header.split("Bearer ")[-1]
+        
+        # # Validate the access token
+        # user_info = validate_access_token(access_token)
+        # if not user_info:
+        #     return jsonify({'message': 'Invalid or expired access token'}), 401
+
+        # If token is valid, proceed with video download
+        data = request.get_json()
+        video_url = data.get('videoUrl')
+        webhook_url = data.get('webhookUrl')
+        ydl_opts = {
+            'format': 'mp4',  # Ensure the format is mp4
+            'outtmpl': '%(title)s.%(ext)s',  # Output file name format
+        }
+
+        def process_video():
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info_dict = ydl.extract_info(video_url, download=True)
+                    video_path = ydl.prepare_filename(info_dict)
+
+                print(f"Download complete: {video_path}")
+
+                # Send a webhook notification
+                webhook_data = {
+                    "status": "success",
+                    "message": "Video download successful",
+                    "filePath": video_path,
+                    "videoUrl": video_url  
+                }
+                requests.post(webhook_url, json=webhook_data)
+
+            except Exception as e:
+                print(f"Error: {e}")
+                error_data = {
+                    "status": "failed",
+                    "message": "Error downloading video",
+                    "error": str(e)
+                }
+                requests.post(webhook_url, json=error_data)
+         
+        threading.Thread(target=process_video).start()      
+
+        return jsonify({'message': 'Video processing started'}), 200        
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
+# Endpoint to analyze the video (mock analysis)
+@app.route('/analyse', methods=['POST'])
+def analyse_video():
+    try:
+        data = request.get_json()
+        file_path = data.get('filePath')
+        webhook_url = data.get('webhookUrl')
+
+        if not file_path or not os.path.exists(file_path):
+            print(file_path)
+            return jsonify({'message': 'Video file not found'}), 404
+
+        thread = threading.Thread(target=process_downloaded_video, args=(file_path, webhook_url))
+        thread.start()
+
+        return jsonify({'message': 'Video analysis started'}), 202
     except Exception as e:
         print(f"Error in classification: {str(e)}")
         return "Cannot be analyzed"
