@@ -1,19 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {motion} from "framer-motion"
 import { X } from "lucide-react"
+import { useUser } from "@clerk/nextjs"
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const {user} = useUser();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  useEffect(()=>{
+    if(user){
+      console.log(user);
+    }
+  }, [user]);
+
   return (
     <nav className="bg-transparent sticky top-0 z-50 backdrop-blur-md">
+    
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 ">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
@@ -67,14 +76,7 @@ export default function Navbar() {
                 What we do?
               </Link>
             </li>
-            <li>
-              <Link
-                href="/dashboard"
-                className="hover:text-blue-500 "
-              >
-                Go to Dashboard
-              </Link>
-            </li>
+       
             <li>
               <Link
                 href="#"
@@ -82,6 +84,24 @@ export default function Navbar() {
               >
                 Testimonials
               </Link>
+            </li>
+
+            <li>
+              { 
+              user?
+              <Link
+                href="/dashboard"
+                className="hover:bg-blue-600 bg-blue-500 p-2 rounded-lg"
+              >
+                Go to Dashboard
+              </Link> : 
+              <Link
+                href="/sign-up"
+                className="hover:bg-blue-600 bg-blue-500 p-2 rounded-lg"
+              >
+                Get Started
+              </Link>
+              }
             </li>
           
           </ul>

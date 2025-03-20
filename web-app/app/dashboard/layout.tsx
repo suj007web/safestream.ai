@@ -8,6 +8,7 @@ import {
   FiChevronsRight,
 
   FiHome,
+  FiLogOut,
   FiMonitor,
 
 
@@ -16,6 +17,8 @@ import {
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function Example({children } : {children: React.ReactNode}) {
   return (
@@ -34,7 +37,8 @@ export default function Example({children } : {children: React.ReactNode}) {
 const Sidebar = () => {
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState("Dashboard");
-
+  const {signOut} = useClerk();
+  const router = useRouter();
   return (
     <motion.nav
       layout
@@ -88,6 +92,15 @@ const Sidebar = () => {
           open={open}
           href="/"
         />
+                <Option
+          Icon={FiLogOut}
+          title="Logout"
+          selected={selected}
+          setSelected={setSelected}
+          open={open}
+          onClick = {()=>signOut(()=>router.push("/"))}
+      
+        />
       </div>
 
       <ToggleClose open={open} setOpen={setOpen} />
@@ -101,7 +114,9 @@ const Option = ({
   selected,
   setSelected,
   open,
-  href
+  href, 
+  onClick
+
  
 }: {
   Icon: IconType;
@@ -110,10 +125,14 @@ const Option = ({
   setSelected: Dispatch<SetStateAction<string>>;
   open: boolean;
   href?: string;
+  onClick?: () => void;
 
 }) => {
   return (
-    <Link href={href as string}>
+    <>
+    {
+        title === "Logout" ?
+
         <motion.button
       layout
       onClick={() => setSelected(title)}
@@ -121,7 +140,7 @@ const Option = ({
     >
       <motion.div
         layout
-        className="grid h-full w-10 place-content-center text-lg"
+        className={`grid h-full w-10 place-content-center text-lg ${title==="Logout" ? "text-red-500" : ""}`}
       >
         <Icon />
       </motion.div>
@@ -131,7 +150,35 @@ const Option = ({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.125 }}
-          className="text-xs font-medium"
+          className={`text-xs font-medium ${title==="Logout" ? "text-red-500" : ""}`}
+          onClick={onClick}
+        >
+          {title}
+        </motion.span>
+      )}
+
+      
+    </motion.button> : 
+    <Link href={href as string} >
+        <motion.button
+      layout
+      onClick={() => setSelected(title)}
+      className={`relative flex h-10 w-full items-center rounded-md transition-colors ${selected === title ? "bg-indigo-100 text-indigo-800" : "text-slate-500 hover:bg-slate-100"}`}
+    >
+      <motion.div
+        layout
+        className={`grid h-full w-10 place-content-center text-lg ${title==="Logout" ? "text-red-500" : ""}`}
+      >
+        <Icon />
+      </motion.div>
+      {open && (
+        <motion.span
+          layout
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.125 }}
+          className={`text-xs font-medium ${title==="Logout" ? "text-red-500" : ""}`}
+          onClick={onClick}
         >
           {title}
         </motion.span>
@@ -140,6 +187,8 @@ const Option = ({
       
     </motion.button>
     </Link>
+    }
+    </>
   );
 };
 
