@@ -6,6 +6,7 @@ import Link from "next/link"
 import {motion} from "framer-motion"
 import { X } from "lucide-react"
 import { useUser } from "@clerk/nextjs"
+import { toast } from "sonner"
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,7 +17,23 @@ export default function Navbar() {
 
   useEffect(()=>{
     if(user){
-      console.log(user);
+    const createUser = async ()=>{
+      const response = await fetch('/api/createUser', {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          name : user.fullName,
+          email : user.primaryEmailAddress?.emailAddress,
+          image : user.imageUrl
+        })
+
+      })
+      const data = await response.json()
+      toast(data.message)
+    }
+    createUser()
     }
   }, [user]);
 

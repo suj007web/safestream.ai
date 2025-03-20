@@ -1,4 +1,5 @@
 import Hero from '@/components/Hero'
+import HowToUse from '@/components/HowToUse'
 import MetaHero from '@/components/MetaHero'
 import Navbar from '@/components/Navbar'
 import WhatWeDo from '@/components/WhatWeDo'
@@ -11,6 +12,7 @@ const Home = () => {
       <Hero/>
       <MetaHero/>
       <WhatWeDo/>
+      <HowToUse/>
     </div>
   )
 }
