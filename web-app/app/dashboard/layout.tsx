@@ -63,14 +63,6 @@ const Sidebar = () => {
           href="/dashboard/videos"
    
         />
-        <Option
-          Icon={FiMonitor}
-          title="View Site"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-          href="/"
-        />
 
         <Option
           Icon={FiBarChart}
@@ -87,6 +79,14 @@ const Sidebar = () => {
           setSelected={setSelected}
           open={open}
           href="/dashboard/profile"
+        />
+                <Option
+          Icon={FiMonitor}
+          title="View Site"
+          selected={selected}
+          setSelected={setSelected}
+          open={open}
+          href="/"
         />
       </div>
 
