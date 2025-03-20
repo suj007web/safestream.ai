@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 
 export default function Hero()  {
   return (
-    <section className="relative overflow-hidden bg-zinc-950">
+    <section className="relative overflow-hidden ">
       <Content />
       <Beams />
       <GradientGrid />
@@ -101,7 +101,7 @@ const Content = () => {
 
 const GlowingChip = ({ children }: { children: string }) => {
   return (
-    <span className="relative z-10 mb-4 inline-block rounded-full border border-zinc-700 bg-zinc-900/20 px-3 py-1.5 text-xs text-zinc-50 md:mb-0">
+    <span className="relative z-10 mb-4 inline-block rounded-full border border-zinc-700 bg-transparent px-3 py-1.5 text-xs text-zinc-50 md:mb-0">
       {children}
       <span className="absolute bottom-0 left-3 right-3 h-[1px] bg-gradient-to-r from-zinc-500/0 via-zinc-300 to-zinc-500/0" />
     </span>
@@ -276,7 +276,7 @@ const GradientGrid = () => {
     
         className="absolute inset-0 z-0"
       />
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-zinc-950/0 to-zinc-950" />
+      <div className="absolute inset-0 z-10" />
     </motion.div>
   );
 };

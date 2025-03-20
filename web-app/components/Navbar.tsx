@@ -13,7 +13,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-transparent ">
+    <nav className="bg-transparent sticky top-0 z-50 backdrop-blur-md">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 ">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
@@ -56,11 +56,11 @@ export default function Navbar() {
 
         transition={{ duration: 0.3
          }}
-        className={`${isMenuOpen ? "block" : "hidden"} w-full md:block md:w-auto flex md:justify-center justify-end items-center`} id="navbar-default">
+        className={`${isMenuOpen ? "block" : "hidden"} w-full absolute  md:top-5 md:right-20 right-10 top-16 z-50 md:block md:w-auto flex md:justify-center justify-end items-center`} id="navbar-default">
           <ul className="font-medium w-[40%] md:w-full gap-10 flex flex-col md:flex-row md:p-0 p-4 md:p-0  text-white rounded-lg bg-gradient-to-b from-gray-900 to-slate-800  md:bg-none ">
             <li>
               <Link
-                href="#"
+                href="#whatwedo"
                 className="hover:text-blue-500 "
                 aria-current="page"
               >
