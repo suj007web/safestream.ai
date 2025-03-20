@@ -14,7 +14,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-transparent ">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 ">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
             src="/logo.png"
@@ -52,16 +52,16 @@ export default function Navbar() {
          }
         </button>
         <motion.div
-        animate={{ y: isMenuOpen ? 0 : 10}}
+        animate={{ y: isMenuOpen ? 0 : 20}}
 
         transition={{ duration: 0.3
          }}
-        className={`${isMenuOpen ? "block" : "hidden"} w-full md:block md:w-auto flex justify-end`} id="navbar-default">
-          <ul className="font-medium w-[40%] md:w-full gap-10 flex flex-col md:flex-row p-4 md:p-0 mt-4 text-white rounded-lg bg-black md:bg-transparent ">
+        className={`${isMenuOpen ? "block" : "hidden"} w-full md:block md:w-auto flex md:justify-center justify-end items-center`} id="navbar-default">
+          <ul className="font-medium w-[40%] md:w-full gap-10 flex flex-col md:flex-row md:p-0 p-4 md:p-0  text-white rounded-lg bg-gradient-to-b from-gray-900 to-slate-800  md:bg-none ">
             <li>
               <Link
                 href="#"
-                className=""
+                className="hover:text-blue-500 "
                 aria-current="page"
               >
                 What we do?
@@ -69,8 +69,8 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="#"
-                className=""
+                href="/dashboard"
+                className="hover:text-blue-500 "
               >
                 Go to Dashboard
               </Link>
@@ -78,7 +78,7 @@ export default function Navbar() {
             <li>
               <Link
                 href="#"
-                className=""
+                className="hover:text-blue-500 "
               >
                 Testimonials
               </Link>
