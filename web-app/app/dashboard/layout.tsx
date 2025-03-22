@@ -25,9 +25,9 @@ export default function Example({children } : {children: React.ReactNode}) {
 
     <div className="flex">
               <Sidebar />
-              {
+              <div className="flex-1">{
                 children
-              }
+              }</div>
     </div>
 
  
@@ -60,7 +60,7 @@ const Sidebar = () => {
         />
         <Option
           Icon={FiVideo}
-          title="Videos"
+          title="Analyze Videos"
           selected={selected}
           setSelected={setSelected}
           open={open}
@@ -128,14 +128,17 @@ const Option = ({
   onClick?: () => void;
 
 }) => {
+  const {signOut} = useClerk();
+  const router = useRouter();
   return (
+    
     <>
     {
         title === "Logout" ?
 
         <motion.button
       layout
-      onClick={() => setSelected(title)}
+      onClick = {()=>signOut(()=>router.push("/"))}
       className={`relative flex h-10 w-full items-center rounded-md transition-colors ${selected === title ? "bg-indigo-100 text-indigo-800" : "text-slate-500 hover:bg-slate-100"}`}
     >
       <motion.div

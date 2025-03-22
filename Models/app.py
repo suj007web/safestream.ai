@@ -134,7 +134,7 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 # Google's OAuth2 token validation URL
 GOOGLE_OAUTH2_VALIDATION_URL = "https://oauth2.googleapis.com/tokeninfo"
 
-def process_downloaded_video(file_path, webhook_url):
+def process_downloaded_video(file_path, webhook_url, video_url):
     try:
         if not file_path or not os.path.exists(file_path):
             print("File not found")
@@ -192,7 +192,9 @@ def process_downloaded_video(file_path, webhook_url):
             payload = {
                 "status": "success",
                 "message": "Video analysis successful",
-                "result": time_index
+                "result": time_index,
+                "videoUrl" : video_url,
+                "filePath" : file_path,
             }
         headers = {"Content-Type": "application/json"}
         response = requests.post(webhook_url, json=payload, headers=headers)
@@ -287,12 +289,13 @@ def analyse_video():
         data = request.get_json()
         file_path = data.get('filePath')
         webhook_url = data.get('webhookUrl')
+        video_url = data.get('videoUrl')
 
         if not file_path or not os.path.exists(file_path):
             print(file_path)
             return jsonify({'message': 'Video file not found'}), 404
 
-        thread = threading.Thread(target=process_downloaded_video, args=(file_path, webhook_url))
+        thread = threading.Thread(target=process_downloaded_video, args=(file_path, webhook_url, video_url))
         thread.start()
 
         return jsonify({'message': 'Video analysis started'}), 202

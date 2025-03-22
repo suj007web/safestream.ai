@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pg:generate" : "drizzle-kit generate",
-    "pg:migrate" : "drizzle-kit migrate",
-    "pg:studio" : "drizzle-kit studio"
+    "pg:generate": "drizzle-kit generate",
+    "pg:migrate": "drizzle-kit migrate",
+    "pg:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.6",
@@ -17,6 +17,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@react-three/fiber": "^9.0.0-alpha.8",
     "@tabler/icons-react": "^3.31.0",
+    "antd": "^5.24.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
@@ -29,22 +30,28 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "recharts": "^2.15.1",
     "simplex-noise": "^4.0.3",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.174.0"
+    "three": "^0.174.0",
+    "tsc-node": "^0.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.174.0",
     "drizzle-kit": "^0.30.5",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

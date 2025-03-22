@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req : Request){
-    const { status, message, filePath} = await req.json();
+    const { status, message, filePath, videoUrl} = await req.json();
     console.log(filePath);
     try{
        if(status === 'success'){
@@ -12,7 +12,8 @@ export async function POST(req : Request){
             },
             body: JSON.stringify({
                 filePath,
-                webhookUrl : 'http://localhost:3000/api/analysisWebhook'
+                webhookUrl : 'http://localhost:3000/api/analysisWebhook',
+                videoUrl
             })
         });
  

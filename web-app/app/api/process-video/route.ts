@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request){
         try{
             const {videoUrl, webhookUrl} = await req.json();
-
+            console.log(videoUrl, webhookUrl, "HI");
             const flaskResponse = await fetch(`${process.env.FLASK_API_URL}/download`, {
                 method: 'POST',
                 headers : {
