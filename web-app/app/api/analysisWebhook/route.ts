@@ -19,7 +19,7 @@ export async function POST(req : Request){
                 thumbnail : thumbnail,
                 timestamps : result,
                 firstVisited : new Date(),  
-            })
+            }).onConflictDoNothing();
             return new Response(JSON.stringify({message : message, data : result}), {
                 status : 200
             })

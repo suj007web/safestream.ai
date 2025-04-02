@@ -1,5 +1,5 @@
 {
-  "id": "6aaccfc3-a595-482c-a622-7e55c2d6daa4",
+  "id": "1fec1e36-9caa-49e2-988e-e3f028d59e95",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -102,9 +102,9 @@
         },
         "thumbnail": {
           "name": "thumbnail",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "timestamps": {
           "name": "timestamps",
@@ -130,6 +130,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "isBlocked": {
+          "name": "isBlocked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -141,6 +148,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "id"
+          ]
+        },
+        "videos_url_unique": {
+          "name": "videos_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "url"
           ]
         }
       },

@@ -12,12 +12,14 @@ CREATE TABLE "videos" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text NOT NULL,
 	"url" text NOT NULL,
-	"thumbnail" text NOT NULL,
+	"thumbnail" varchar(255),
 	"timestamps" jsonb NOT NULL,
 	"visits" integer DEFAULT 0 NOT NULL,
 	"lastVisited" timestamp,
 	"firstVisited" timestamp NOT NULL,
-	CONSTRAINT "videos_id_unique" UNIQUE("id")
+	"isBlocked" boolean DEFAULT false NOT NULL,
+	CONSTRAINT "videos_id_unique" UNIQUE("id"),
+	CONSTRAINT "videos_url_unique" UNIQUE("url")
 );
 --> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_videoId_videos_id_fk" FOREIGN KEY ("videoId") REFERENCES "public"."videos"("id") ON DELETE cascade ON UPDATE no action;
