@@ -22,3 +22,14 @@ dist/
 .env 
 
 venv/
+
+*.mp4
+.mp4
+*.mkv
+*.m4v
+*.mov
+*.avi
+*.wmv
+*.flv
+*.webm
+*.m4a
