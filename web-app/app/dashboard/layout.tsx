@@ -3,10 +3,10 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { IconType } from "react-icons";
 import Image from "next/image";
 import {
+  
   FiBarChart,
-
   FiChevronsRight,
-
+  FiLink,
   FiHome,
   FiLogOut,
   FiMonitor,
@@ -50,7 +50,7 @@ const Sidebar = () => {
       <TitleSection open={open} />
 
       <div className="space-y-1">
-        <Option
+      <Option
           Icon={FiHome}
           title="Dashboard"
           selected={selected}
@@ -58,6 +58,7 @@ const Sidebar = () => {
           open={open}
           href="/dashboard"
         />
+       
         <Option
           Icon={FiVideo}
           title="Analyze Videos"
@@ -66,6 +67,14 @@ const Sidebar = () => {
           open={open}
           href="/dashboard/videos"
    
+        />
+         <Option
+          Icon={FiLink}
+          title="Link Analyzer"
+          selected={selected}
+          setSelected={setSelected}
+          open={open}
+          href="/dashboard/links"
         />
 
         <Option
