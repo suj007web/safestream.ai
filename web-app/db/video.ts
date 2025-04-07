@@ -14,6 +14,6 @@ export const videos = pgTable("videos", {
     isBlocked : boolean("isBlocked").notNull().default(false),
     description: text("description").default("No description available."),
     safety_rating : text("safety_rating"),
-    explaination : varchar("explanation", { length: 1000 }),
+    explanation : varchar("explanation", { length: 10000 }),
 
 })

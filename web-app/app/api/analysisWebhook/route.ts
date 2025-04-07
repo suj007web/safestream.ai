@@ -13,13 +13,23 @@ export async function POST(req : Request){
         if(status == 'success'){
             console.log(result);
             const thumbnail = getYouTubeThumbnail(videoUrl);
+            console.log(thumbnail)
             await db.insert(videos).values({
                 title : filePath,
                 url : videoUrl,
                 thumbnail : thumbnail,
                 timestamps : result,
                 firstVisited : new Date(),  
-            }).onConflictDoNothing();
+            }).onConflictDoUpdate(
+                {
+                    target : videos.url,
+                    set : {
+                        timestamps : result,
+                        firstVisited : new Date(),
+                        thumbnail : thumbnail,
+                    }
+                }
+            );
             return new Response(JSON.stringify({message : message, data : result}), {
                 status : 200
             })

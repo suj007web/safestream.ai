@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import {  NextResponse } from 'next/server';
 import { db } from "@/db/drizzle";
 import { videos } from "@/db/video";
 import { eq } from 'drizzle-orm';
@@ -6,7 +6,7 @@ export async function POST(req: Request){
     const { videoURL } = await req.json();
    
       try {
-       const result = await db
+       await db
         .update(videos)
         .set({isBlocked: true })
         .where(eq(videos.url, videoURL)) 

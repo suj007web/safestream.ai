@@ -6,12 +6,14 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 
 interface Result {
-  title: string;
+  data :{
+    title: string;
   description: string;
-  result: {
+
     safety_rating: string;
-    explaination: string;
-  };
+    explanation: string;
+
+  }
 }
 
 const Page = () => {
@@ -43,7 +45,7 @@ const Page = () => {
     const videoUrl = data.get('url') as string;
     
     
-    const res = await fetch('/api/analyze-content', {
+    const res = await fetch(`/api/analyze-content`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -126,19 +128,19 @@ const Page = () => {
                             <p className='text-red-500'>Invalid YouTube URL</p>
                           )}
                           <div className='w-full md:w-2/5 p-3 text-justify'>
-                              <p className='text-lg font-semibold pb-4'><strong>Title:</strong> {result?.title}</p>
-                              <p className='text-lg font-semibold'><strong>Description:</strong> {result?.description || '(No description)'}</p>
+                              <p className='text-lg font-semibold pb-4'><strong>Title:</strong> {result?.data.title}</p>
+                              <p className='text-lg font-semibold'><strong>Description:</strong> {result?.data.description || '(No description)'}</p>
                           </div>
                       </div>)}
-                      {result.result.safety_rating === 'Safe' ? (
+                      {result.data.safety_rating === 'Safe' ? (
                          <div className='mt-6 p-4 bg-green-100 rounded-lg text-justify'>
-                             <p className='text-lg font-semibold text-green-800'><strong>Analysis:</strong> {result?.result?.safety_rating}</p>
-                             <p className='text-lg font-semibold text-green-800'><strong>Explaination:</strong> {result?.result?.explaination}</p>
+                             <p className='text-lg font-semibold text-green-800'><strong>Analysis:</strong> {result?.data?.safety_rating}</p>
+                             <p className='text-lg font-semibold text-green-800'><strong>Explanation:</strong> {result?.data?.explanation}</p>
                          </div>
                       ) : (
                         <div className='mt-6 p-4 bg-red-100 rounded-lg text-justify'>
-                           <p className='text-lg font-semibold text-red-800'><strong>Analysis:</strong> {result?.result?.safety_rating}</p>
-                           <p className='text-lg font-semibold text-red-800'><strong>Explaination:</strong> {result?.result?.explaination}</p>
+                           <p className='text-lg font-semibold text-red-800'><strong>Analysis:</strong> {result?.data?.safety_rating}</p>
+                           <p className='text-lg font-semibold text-red-800'><strong>Explanation:</strong> {result?.data?.explanation}</p>
                            <div className='flex justify-end'>
                            <Button className='bg-red-800 hover:bg-red-700 mt-3 '
                            onClick={blockVideo}>Block Video</Button></div>

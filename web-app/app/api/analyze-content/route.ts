@@ -1,27 +1,93 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import { db } from '@/db/drizzle';
+import { videos } from '@/db/video';
+import { eq } from 'drizzle-orm';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-export async function POST(req: NextRequest) {
-  const { videoUrl } = await req.json();
+async function geminiRequest(videoUrl: string) {
   const videoId = getYouTubeVideoId(videoUrl);
 
   if (!videoId) {
-    return NextResponse.json({ error: "Invalid YouTube URL" }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid YouTube URL' }, { status: 400 });
   }
 
   try {
     const videoData = await fetchYouTubeVideoData(videoId);
+    if (!videoData) {
+      return NextResponse.json({ error: 'Video not found' }, { status: 404 });
+    }
+ 
     const analysis = await geminiQuery(videoData.title, videoData.description);
-    return NextResponse.json({
+
+    if (!analysis) {
+      return NextResponse.json(
+        { error: 'Failed to analyze video content' },
+        { status: 500 }
+      );
+    }
+
+    await db
+  .insert(videos)
+  .values({
+    url: videoUrl,
+    explanation: analysis.explanation,
+    safety_rating: analysis.safety_rating,
+    title: videoData.title,
+    description: videoData.description,
+    timestamps: [],
+    firstVisited: new Date(),
+    lastVisited: new Date(),
+  })
+  .onConflictDoUpdate({
+    target: videos.url,
+    set: {
+      explanation: analysis.explanation,
+      safety_rating: analysis.safety_rating,
       title: videoData.title,
       description: videoData.description,
-      result: analysis
+      lastVisited: new Date(),
+    },
+  });
+  const[video] = await db.select().from(videos).where(eq(videos.url, videoUrl));
+
+    return NextResponse.json({
+      data : video,
+      success: true,
+      message: 'Fetched Result from gemini API',
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch video data' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch video data ' + error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const { videoUrl } = await req.json();
+
+  const [video] = await db
+    .select()
+    .from(videos)
+    .where(eq(videos.url, videoUrl as string));
+
+    console.log(video, "FROM /api/analyze-content/route.ts");
+  if (
+    video === undefined ||
+    video.description === null ||
+    video.explanation === null ||
+    video.safety_rating === null
+  ) {
+    return await geminiRequest(videoUrl);
+  }else{
+    return NextResponse.json({
+      data: video,
+      success: true,
+      message: 'Video fetched from the database',
+    });
   }
 }
 
@@ -52,39 +118,42 @@ Now, analyze the given YouTube video and provide a JSON response.
 It should be of form :
 {
       safety_rating:[OUTPUT,string],
-      explaination:[OUTPUT,string]
+      explanation:[OUTPUT,string]
       ,
           }
     `;
   const data = {
-    contents: [{ parts: [{ text: prompt }] }]
+    contents: [{ parts: [{ text: prompt }] }],
   };
 
   const response = await axios.post(url, data, {
-    headers: { "Content-Type": "application/json" }
+    headers: { 'Content-Type': 'application/json' },
   });
 
   const jsonText = response.data.candidates[0].content.parts[0].text;
-  const extractedData = JSON.parse(jsonText.replace(/```json|```/g, "").trim());
+  const extractedData = JSON.parse(jsonText.replace(/```json|```/g, '').trim());
   return extractedData;
 }
 
 async function fetchYouTubeVideoData(videoId: string) {
-  const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
-    params: { part: 'snippet', id: videoId, key: YOUTUBE_API_KEY }
-  });
+  const response = await axios.get(
+    `https://www.googleapis.com/youtube/v3/videos`,
+    {
+      params: { part: 'snippet', id: videoId, key: YOUTUBE_API_KEY },
+    }
+  );
 
   const videoData = response.data.items[0]?.snippet;
   if (!videoData) {
-    throw new Error("Video not found");
+    throw new Error('Video not found');
   }
 
   return videoData;
 }
 
 function getYouTubeVideoId(url: string) {
-  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([^&?/]+)/;
+  const regex =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([^&?/]+)/;
   const match = url.match(regex);
   return match ? match[1] : null;
 }
-
