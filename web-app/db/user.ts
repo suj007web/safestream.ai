@@ -7,4 +7,5 @@ export const users = pgTable("users", {
     name : varchar("name", {length : 255}).notNull(),
     image : text("image").notNull(),
     videoId : uuid("videoId").references(()=> videos.id, {onDelete : 'cascade'}),
+    urlId : uuid("urlId").references(()=> videos.id, {onDelete : 'cascade'}),
 })

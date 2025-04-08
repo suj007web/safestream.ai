@@ -8,6 +8,7 @@ import {
   FiChevronsRight,
 
   FiHome,
+  FiLink,
   FiLogOut,
   FiMonitor,
 
@@ -66,6 +67,14 @@ const Sidebar = () => {
           open={open}
           href="/dashboard/videos"
    
+        />
+        <Option
+        Icon = {FiLink}
+        title="Analyze Urls"
+        selected={selected}
+        setSelected={setSelected}
+        open={open}
+        href="/dashboard/urls"
         />
 
         <Option
