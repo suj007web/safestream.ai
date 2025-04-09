@@ -1,9 +1,9 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Table, Tag, Image } from 'antd';
+import { Table, Tag, Image, Spin } from 'antd';
 
 import {  message } from 'antd';
-import { Delete, LucideDelete, Trash } from 'lucide-react';
+import {  Trash } from 'lucide-react';
 
 
 interface VideoAnalytics {
@@ -115,7 +115,7 @@ const Page = () => {
     {
       title: 'Delete',
       key: 'delete',
-      render: (_: any, record: VideoAnalytics) => (
+      render: (_: string, record: VideoAnalytics) => (
      
         /*<Popconfirm
           title="Are you sure to delete this video?"
@@ -136,7 +136,11 @@ const Page = () => {
       <h1 className="text-2xl font-bold mb-4 text-center underline ">Analytics</h1>
       <h2 className="text-xl font-semibold mb-4 text-center">Video Data</h2>
       <Table 
-        loading={loading}
+        locale={
+          {
+            emptyText:loading? <Spin />: ""
+          }
+        }
         dataSource={data}
         columns={columns}
         rowKey={(record) => record.id}
