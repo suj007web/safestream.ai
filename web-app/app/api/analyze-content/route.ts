@@ -6,10 +6,16 @@ import { eq } from 'drizzle-orm';
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
+function getYouTubeThumbnail(videoUrl: string): string | null {
+  const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*vi\/))([^?&]+)/);
+  if (match && match[1]) {
+      return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+  }
+  return null;
+}
 async function geminiRequest(videoUrl: string) {
   const videoId = getYouTubeVideoId(videoUrl);
-
+  const thumbnail = getYouTubeThumbnail(videoUrl);
   if (!videoId) {
     return NextResponse.json({ error: 'Invalid YouTube URL' }, { status: 400 });
   }
@@ -37,6 +43,7 @@ async function geminiRequest(videoUrl: string) {
     safety_rating: analysis.safety_rating,
     title: videoData.title,
     description: videoData.description,
+    thumbnail : thumbnail,
     timestamps: [],
     firstVisited: new Date(),
     lastVisited: new Date(),
@@ -47,6 +54,7 @@ async function geminiRequest(videoUrl: string) {
       explanation: analysis.explanation,
       safety_rating: analysis.safety_rating,
       title: videoData.title,
+      thumbnail : thumbnail,
       description: videoData.description,
       lastVisited: new Date(),
     },

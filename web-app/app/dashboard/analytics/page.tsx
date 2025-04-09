@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag, Image, Spin } from 'antd';
 
-import {  message } from 'antd';
+
 import {  Trash } from 'lucide-react';
+import { toast } from 'sonner';
 
 
 interface VideoAnalytics {
@@ -56,13 +57,13 @@ const Page = () => {
   
       if (response.ok) {
         setData(prev => prev.filter(video => video.id !== id));
-        message.success('Video deleted');
+        toast('Video deleted successfully');
       } else {
-        message.error('Failed to delete video');
+        toast('Failed to delete video');
       }
     } catch (error) {
       console.error('Delete error:', error);
-      message.error('Error deleting video');
+      toast('Error deleting video');
     }
   };
   
@@ -107,7 +108,7 @@ const Page = () => {
       key: 'safety_rating',
       render: (rating: string) => (
         <Tag color={rating === 'Safe' ? 'green' : 'red'} >
-          {rating === 'Safe' ? 'Safe' : 'Caution'}
+          {rating}
         </Tag>
       ),
       
@@ -138,7 +139,7 @@ const Page = () => {
       <Table 
         locale={
           {
-            emptyText:loading? <Spin />: ""
+            emptyText:loading? <Spin />: "No Videos Found"
           }
         }
         dataSource={data}

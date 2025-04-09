@@ -4,6 +4,8 @@ import MetaHero from '@/components/MetaHero'
 import Navbar from '@/components/Navbar'
 import WhatWeDo from '@/components/WhatWeDo'
 import React from 'react'
+import '@ant-design/v5-patch-for-react-19';
+
 
 const Home = () => {
   return (
