@@ -36,6 +36,13 @@
       "when": 1744079100731,
       "tag": "0004_dazzling_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1744146586161,
+      "tag": "0005_goofy_starjammers",
+      "breakpoints": true
     }
   ]
 }

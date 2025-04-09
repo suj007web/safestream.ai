@@ -1,0 +1,1 @@
+ALTER TABLE "videos" ADD CONSTRAINT "videos_thumbnail_unique" UNIQUE("thumbnail");

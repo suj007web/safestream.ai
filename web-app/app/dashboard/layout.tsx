@@ -70,7 +70,7 @@ const Sidebar = () => {
         />
         <Option
         Icon = {FiLink}
-        title="Analyze Urls"
+        title="Analyze Url"
         selected={selected}
         setSelected={setSelected}
         open={open}

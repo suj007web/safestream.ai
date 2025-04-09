@@ -6,7 +6,7 @@ export const videos = pgTable("videos", {
     id : uuid("id").notNull().primaryKey().defaultRandom().unique(),
     title : text("title").notNull(),
     url : text("url").notNull().unique(),
-    thumbnail: varchar("thumbnail", { length: 255 }),
+    thumbnail: varchar("thumbnail", { length: 255 }).unique(),
     timestamps : jsonb("timestamps").notNull(),
     visits : integer("visits").notNull().default(0),
     lastVisited : timestamp("lastVisited", {mode : 'date'}),
