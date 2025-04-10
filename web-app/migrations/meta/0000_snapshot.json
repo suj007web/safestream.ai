@@ -1,5 +1,5 @@
 {
-  "id": "1fec1e36-9caa-49e2-988e-e3f028d59e95",
+  "id": "02786082-aea8-4570-a38c-152e85012d1c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -32,30 +32,10 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "videoId": {
-          "name": "videoId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "users_videoId_videos_id_fk": {
-          "name": "users_videoId_videos_id_fk",
-          "tableFrom": "users",
-          "tableTo": "videos",
-          "columnsFrom": [
-            "videoId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_id_unique": {
@@ -137,10 +117,49 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'No description available.'"
+        },
+        "safety_rating": {
+          "name": "safety_rating",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "explanation": {
+          "name": "explanation",
+          "type": "varchar(10000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userEmail": {
+          "name": "userEmail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "videos_userEmail_users_email_fk": {
+          "name": "videos_userEmail_users_email_fk",
+          "tableFrom": "videos",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userEmail"
+          ],
+          "columnsTo": [
+            "email"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "videos_id_unique": {
@@ -150,10 +169,99 @@
             "id"
           ]
         },
-        "videos_url_unique": {
-          "name": "videos_url_unique",
+        "videos_thumbnail_unique": {
+          "name": "videos_thumbnail_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "thumbnail"
+          ]
+        },
+        "user_video_url_unique": {
+          "name": "user_video_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userEmail",
+            "url"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.urls": {
+      "name": "urls",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isBlocked": {
+          "name": "isBlocked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "safety_rating": {
+          "name": "safety_rating",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "explanation": {
+          "name": "explanation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userEmail": {
+          "name": "userEmail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "urls_userEmail_users_email_fk": {
+          "name": "urls_userEmail_users_email_fk",
+          "tableFrom": "urls",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userEmail"
+          ],
+          "columnsTo": [
+            "email"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "urls_id_unique": {
+          "name": "urls_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id"
+          ]
+        },
+        "user_url": {
+          "name": "user_url",
+          "nullsNotDistinct": false,
+          "columns": [
+            "userEmail",
             "url"
           ]
         }

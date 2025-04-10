@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1743612633596,
-      "tag": "0000_misty_metal_master",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1743705394616,
-      "tag": "0001_ambiguous_gertrude_yorkes",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1744053684944,
-      "tag": "0002_special_fabian_cortez",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1744078943548,
-      "tag": "0003_tearful_cerebro",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1744079100731,
-      "tag": "0004_dazzling_shotgun",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1744146586161,
-      "tag": "0005_goofy_starjammers",
+      "when": 1744254588777,
+      "tag": "0000_hesitant_mathemanic",
       "breakpoints": true
     }
   ]

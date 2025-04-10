@@ -1,1 +1,0 @@
-ALTER TABLE "videos" ALTER COLUMN "explanation" SET DATA TYPE varchar(10000);

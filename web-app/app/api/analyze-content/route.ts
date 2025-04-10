@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { db } from '@/db/drizzle';
 import { videos } from '@/db/video';
-import { eq } from 'drizzle-orm';
-
+import { and, eq } from 'drizzle-orm';
+import { auth } from '@clerk/nextjs/server';
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
 function getYouTubeThumbnail(videoUrl: string): string | null {
   const match = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/|.*vi\/))([^?&]+)/);
   if (match && match[1]) {
@@ -13,7 +14,7 @@ function getYouTubeThumbnail(videoUrl: string): string | null {
   }
   return null;
 }
-async function geminiRequest(videoUrl: string) {
+async function geminiRequest(videoUrl: string, userEmail : string) {
   const videoId = getYouTubeVideoId(videoUrl);
   const thumbnail = getYouTubeThumbnail(videoUrl);
   if (!videoId) {
@@ -34,11 +35,12 @@ async function geminiRequest(videoUrl: string) {
         { status: 500 }
       );
     }
-
+    
     await db
   .insert(videos)
   .values({
     url: videoUrl,
+    userEmail : userEmail,
     explanation: analysis.explanation,
     safety_rating: analysis.safety_rating,
     title: videoData.title,
@@ -49,7 +51,7 @@ async function geminiRequest(videoUrl: string) {
     lastVisited: new Date(),
   })
   .onConflictDoUpdate({
-    target: videos.url,
+    target: [videos.url, videos.userEmail],
     set: {
       explanation: analysis.explanation,
       safety_rating: analysis.safety_rating,
@@ -59,7 +61,11 @@ async function geminiRequest(videoUrl: string) {
       lastVisited: new Date(),
     },
   });
-  const[video] = await db.select().from(videos).where(eq(videos.url, videoUrl));
+  const[video] = await db.select().from(videos).where(
+    and(
+      eq(videos.url, videoUrl), 
+      eq(videos.userEmail , userEmail as string)
+    ));
 
     return NextResponse.json({
       data : video,
@@ -77,19 +83,32 @@ async function geminiRequest(videoUrl: string) {
 export async function POST(req: NextRequest) {
   const { videoUrl } = await req.json();
 
+
+  const { userId } = await auth();
+  const user = await fetch(`https://api.clerk.dev/v1/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+    },
+  }).then(res => res.json());
+  const userEmail = user?.email_addresses?.[0]?.email_address;
   const [video] = await db
     .select()
     .from(videos)
-    .where(eq(videos.url, videoUrl as string));
+    .where(
+      and(
+        eq(videos.url, videoUrl), 
+        eq(videos.userEmail , userEmail as string)
+      )
+    );
 
-    console.log(video, "FROM /api/analyze-content/route.ts");
+ 
   if (
     video === undefined ||
     video.description === null ||
     video.explanation === null ||
     video.safety_rating === null
   ) {
-    return await geminiRequest(videoUrl);
+    return await geminiRequest(videoUrl, userEmail);
   }else{
     return NextResponse.json({
       data: video,
@@ -103,7 +122,7 @@ async function geminiQuery(title: string, description: string) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
   const prompt = `
 Analyze the safety of a YouTube video based on its title and description. Your task is to determine if the video might contain offensive content, including but not limited to:
-
+db
 - **Nudity or Sexual Content**
 - **Violence or Graphic Content**
 - **Hate Speech or Discrimination**

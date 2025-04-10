@@ -1,8 +1,12 @@
+
 import { NextResponse } from "next/server";
 
 export async function POST(req : Request){
-    const { status, message, filePath, videoUrl} = await req.json();
-    console.log(filePath);
+    const { status, message, filePath, videoUrl, userEmail} = await req.json();
+        
+                  
+             
+   
     try{
        if(status === 'success'){
         const response = await fetch(`${process.env.FLASK_API_URL}/analyse`, {
@@ -13,7 +17,8 @@ export async function POST(req : Request){
             body: JSON.stringify({
                 filePath,
                 webhookUrl : 'http://localhost:3000/api/analysisWebhook',
-                videoUrl
+                videoUrl,
+                userEmail,
             })
         });
  

@@ -1,2 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "urlId" uuid;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_urlId_videos_id_fk" FOREIGN KEY ("urlId") REFERENCES "public"."videos"("id") ON DELETE cascade ON UPDATE no action;

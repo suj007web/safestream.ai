@@ -134,7 +134,7 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 # Google's OAuth2 token validation URL
 GOOGLE_OAUTH2_VALIDATION_URL = "https://oauth2.googleapis.com/tokeninfo"
 
-def process_downloaded_video(file_path, webhook_url, video_url):
+def process_downloaded_video(file_path, webhook_url, video_url, user_email):
     try:
         if not file_path or not os.path.exists(file_path):
             print("File not found")
@@ -195,6 +195,7 @@ def process_downloaded_video(file_path, webhook_url, video_url):
                 "result": time_index,
                 "videoUrl" : video_url,
                 "filePath" : file_path,
+                "userEmail" : user_email
             }
         headers = {"Content-Type": "application/json"}
         response = requests.post(webhook_url, json=payload, headers=headers)
@@ -245,6 +246,7 @@ def download_video():
         data = request.get_json()
         video_url = data.get('videoUrl')
         webhook_url = data.get('webhookUrl')
+        user_email = data.get('userEmail')
         ydl_opts = {
             'format': 'mp4',  # Ensure the format is mp4
             'outtmpl': '%(title)s.%(ext)s',  # Output file name format
@@ -263,7 +265,8 @@ def download_video():
                     "status": "success",
                     "message": "Video download successful",
                     "filePath": video_path,
-                    "videoUrl": video_url  
+                    "videoUrl": video_url,
+                    "userEmail": user_email  
                 }
                 requests.post(webhook_url, json=webhook_data)
 
@@ -290,12 +293,13 @@ def analyse_video():
         file_path = data.get('filePath')
         webhook_url = data.get('webhookUrl')
         video_url = data.get('videoUrl')
+        user_email = data.get('userEmail');
 
         if not file_path or not os.path.exists(file_path):
             print(file_path)
             return jsonify({'message': 'Video file not found'}), 404
 
-        thread = threading.Thread(target=process_downloaded_video, args=(file_path, webhook_url, video_url))
+        thread = threading.Thread(target=process_downloaded_video, args=(file_path, webhook_url, video_url, user_email))
         thread.start()
 
         return jsonify({'message': 'Video analysis started'}), 202
