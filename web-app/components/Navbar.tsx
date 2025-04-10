@@ -43,11 +43,11 @@ export default function Navbar() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 ">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
-            src="/logo.png"
-            className="h-16 w-auto"
+            src="/logo-safestream-dark.png"
+            className="h-20 w-auto"
             alt="Logo"
-            width={200}
-            height={200}
+            width={400}
+            height={400}
           />
         
         </Link>
@@ -108,7 +108,7 @@ export default function Navbar() {
               user?
               <Link
                 href="/dashboard"
-                className="hover:bg-blue-600 bg-blue-500 p-2 rounded-lg"
+                className="hover:bg-blue-600 underline md:no-underline md:bg-blue-500 md:p-2 rounded-lg"
               >
                 Go to Dashboard
               </Link> : 

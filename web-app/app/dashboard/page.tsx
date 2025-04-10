@@ -1,13 +1,14 @@
 "use client"
 import { useUser } from '@clerk/nextjs'
-import React from 'react'
+
 import Image from 'next/image'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import {Spin} from 'antd'
+import useIsMobile from '@/hooks/useIsMobile'
 export default function Page() {
   const {user} = useUser();
-
+  
   const data = [
     { date: "2025-03-01", videosAnalyzed: 42 },
     { date: "2025-03-05", videosAnalyzed: 78 },
@@ -21,6 +22,16 @@ export default function Page() {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
     return `${date.getMonth() + 1}/${date.getDate()}`
+  }
+
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="h-screen flex items-center px-10 justify-center bg-black text-white text-xl">
+        Please switch to a desktop device for the best experience.
+      </div>
+    );
   }
   return (
     <>

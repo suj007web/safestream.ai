@@ -4,24 +4,26 @@ import { IconType } from "react-icons";
 import Image from "next/image";
 import {
   FiBarChart,
-
   FiChevronsRight,
-
   FiHome,
   FiLink,
   FiLogOut,
   FiMonitor,
-
-
-  FiUsers,
   FiVideo,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Example({children } : {children: React.ReactNode}) {
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return(<>
+    {children}
+    </>)
+  }
   return (
 
     <div className="flex">
@@ -85,14 +87,7 @@ const Sidebar = () => {
           open={open}
           href="/dashboard/analytics"
         />
-        <Option
-          Icon={FiUsers}
-          title="Profile"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-          href="/dashboard/profile"
-        />
+     
                 <Option
           Icon={FiMonitor}
           title="View Site"

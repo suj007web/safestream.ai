@@ -1,6 +1,7 @@
 import { db } from "@/db/drizzle";
 import { urls } from "@/db/urls";
-import { eq } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 
@@ -10,8 +11,16 @@ export async function POST(req : Request){
     if (!url) {
       return NextResponse.json({ error: "User input is required" }, { status: 400 });
     }
+    const { userId } = await auth();
+              
+    const user = await fetch(`https://api.clerk.dev/v1/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+      },
+    }).then(res => res.json());
+    const userEmail = user?.email_addresses?.[0]?.email_address;
 
-    const [storedUrl] = await db.select().from(urls).where(eq(urls.url, url));
+    const [storedUrl] = await db.select().from(urls).where(and(eq(urls.url, url) , eq(urls.userEmail, userEmail)));
     if (storedUrl) {
       return NextResponse.json({ data : storedUrl, success : true, message : "URL data fetched successfully from DB" }, { status: 200 });
     } 
@@ -75,6 +84,7 @@ export async function POST(req : Request){
       url: url,
       safety_rating: extractedData.safety_rating,
       explanation: extractedData.explanation,
+      userEmail : userEmail,
     })
     const [urlData] = await db.select().from(urls).where(eq(urls.url, url));
     return NextResponse.json({ data : urlData, success : true, message : "URL data fetched successfully from API" }, { status: 200 });
