@@ -1,10 +1,12 @@
 
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { HashRouter, Navigate, Route, Routes } from 'react-router';
 import App from './App.tsx'
-import { SignIn, useAuth } from '@clerk/clerk-react';
+import { ClerkProvider,SignIn, useAuth } from '@clerk/clerk-react';
 
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isSignedIn, isLoaded } = useAuth();
   
@@ -20,7 +22,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
+<ClerkProvider publishableKey={PUBLISHABLE_KEY} >
+<HashRouter>
   <Routes>
       <Route path="/" element={
         <ProtectedRoute>
@@ -29,7 +32,8 @@ createRoot(document.getElementById('root')!).render(
       } />
       <Route path="/sign-in/*" element={<SignIn routing="path" path="/sign-in" />} />
     </Routes>
-</BrowserRouter>
+</HashRouter>
   
+</ClerkProvider>
   
 )
