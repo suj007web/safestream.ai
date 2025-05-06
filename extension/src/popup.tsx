@@ -5,9 +5,9 @@ import {
   SignedOut,
   UserButton
 } from "@clerk/chrome-extension"
-import { CountButton } from "~features/count-button"
+import { CountButton } from "./features/count-button"
 
-import "~style.css"
+import "style.css"
 
 const PUBLISHABLE_KEY = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
 const EXTENSION_URL = chrome.runtime.getURL(".")
